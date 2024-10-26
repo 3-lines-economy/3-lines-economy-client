@@ -15,8 +15,11 @@ const ArticleDetail: React.FC = () => {
   return (
     <S.ArticleContainer>
       <S.ArticleHeader>
-        <S.Category>{article.category}</S.Category>
-        <S.Title>{article.title}</S.Title>
+        <div style={{ display: "flex" }}>
+          <S.Category>{article.category}</S.Category>
+          <div style={{ width: "15px" }}></div>
+          <S.Title>{article.title}</S.Title>
+        </div>
         <S.Date>{article.datetime.split(" ")[0].replace(/-/g, ".")}</S.Date>
       </S.ArticleHeader>
 
@@ -38,7 +41,6 @@ const ArticleDetail: React.FC = () => {
         </S.LinkButton>
       </S.Summary>
 
-      {/* 확장형 토글 섹션 */}
       <S.ToggleButton onClick={() => setIsExpanded(!isExpanded)}>
         ▼ 경제신문 정리하기
       </S.ToggleButton>
@@ -87,7 +89,7 @@ const ArticleDetail: React.FC = () => {
                   <strong>기사 내용의 수치화</strong>
                 </td>
                 <td>
-                  <S.Input placeholder="기사 내용 속 수치화 부분을 작성해 보세요." />
+                  <S.Input placeholder="기사 내용 속 수치화 \n부분을 작성해 보세요." />
                 </td>
               </tr>
               <tr>

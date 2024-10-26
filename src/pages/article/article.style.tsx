@@ -29,7 +29,7 @@ export const Category = styled.div`
   color: #666;
   background-color: #e0e0e0;
   padding: 0.25rem 0.5rem;
-  border-radius: 4px;
+  border-radius: 12px;
   display: inline-block;
   margin-bottom: 0.5rem;
 `;
@@ -108,15 +108,17 @@ export const Table = styled.table`
   border-radius: 8px;
 
   td {
-    padding: 0.5rem;
+    text-justify: center;
+    height: 100px;
     border-top: 1px solid #ddd;
-    vertical-align: top;
+    vertical-align: middle;
     background-color: white;
   }
   td:first-of-type {
     width: 25%;
     font-weight: 500;
     background-color: rgba(58, 61, 78, 0.03);
+    padding-left: 10px;
   }
 
   strong {
@@ -130,17 +132,17 @@ export const Row = styled.div`
   gap: 0.5rem;
 `;
 
-export const Input = styled.input`
-  width: 100%;
+export const Input = styled.textarea`
+  width: 97%;
+  height: 85%;
   padding: 0.5rem;
   font-size: 16px;
   color: #333;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  outline: none;
+  border: none;
+  resize: none;
   &::placeholder {
-    color: #999;
+    color: #99a3b6;
+    vertical-align: middle;
   }
 `;
 
