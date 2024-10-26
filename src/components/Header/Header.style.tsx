@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 
 export const Container = styled.div`
-  padding-left: 100px;
-  padding-right: 100px;
+  padding: 0 20px;
+  margin: 0 100px;
   height: 60px;
   display: flex;
   align-items: center;

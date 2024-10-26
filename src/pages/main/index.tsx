@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useRecoilState, useSetRecoilState } from "recoil";
 import { calendarValueState } from "../../atoms/calendarAtom";
 import MainBanner from "@public/main-banner.svg";
+import CardNewsText from "@public/card_news_text.svg";
 import * as S from "./index.style";
 import SideBar from "@/components/Sidebar/Sidebar";
 import { selectedArticleState } from "@/atoms/selectedArticleAtom";
@@ -78,71 +79,96 @@ const Main: React.FC = () => {
   }, [selectedDate]);
 
   return (
-    <S.MainContainer>
-      <S.SideBarContainer>
-        <CustomCalendar />
-        <SideBar />
-      </S.SideBarContainer>
-      <S.Content>
-        <MainBanner />
-        {isLoading ? (
-          <S.LoadingMessage>Loading...</S.LoadingMessage>
-        ) : (
-          <S.MainBody>
-            <S.PostList>
-              {currentPosts.map((post, index) => (
-                <S.PostItem
-                  key={index}
-                  onClick={() => handleArticleClick(post)}>
-                  <S.PostItemLeft>{post.category}</S.PostItemLeft>
-                  <S.PostItemCenter>{post.title}</S.PostItemCenter>
-                  <S.PostItemRight>
-                    {post.datetime.split(" ")[0].replace(/-/g, ".")}
-                  </S.PostItemRight>
-                </S.PostItem>
-              ))}
-            </S.PostList>
-            <S.Pagination>
-              <S.PageButton
-                onClick={() => paginate(1)}
-                disabled={currentPage === 1}
-                isCurrentPage={false}>
-                {"<<"}
-              </S.PageButton>
-              <S.PageButton
-                onClick={() => paginate(currentPage - 1)}
-                disabled={currentPage === 1}
-                isCurrentPage={false}>
-                {"<"}
-              </S.PageButton>
-              {Array.from(
-                { length: endPage - startPage + 1 },
-                (_, i) => startPage + i
-              ).map((pageNumber) => (
+    <>
+      <S.MainContainer>
+        <S.SideBarContainer>
+          <CustomCalendar />
+          <SideBar />
+        </S.SideBarContainer>
+        <S.Content>
+          <MainBanner />
+          {isLoading ? (
+            <S.LoadingMessage>Loading...</S.LoadingMessage>
+          ) : (
+            <S.MainBody>
+              <S.PostList>
+                {currentPosts.map((post, index) => (
+                  <S.PostItem
+                    key={index}
+                    onClick={() => handleArticleClick(post)}>
+                    <S.PostItemLeft>{post.category}</S.PostItemLeft>
+                    <S.PostItemCenter>{post.title}</S.PostItemCenter>
+                    <S.PostItemRight>
+                      {post.datetime.split(" ")[0].replace(/-/g, ".")}
+                    </S.PostItemRight>
+                  </S.PostItem>
+                ))}
+              </S.PostList>
+              <S.Pagination>
                 <S.PageButton
-                  key={pageNumber}
-                  onClick={() => paginate(pageNumber)}
-                  isCurrentPage={currentPage === pageNumber}>
-                  {pageNumber}
+                  onClick={() => paginate(1)}
+                  disabled={currentPage === 1}
+                  isCurrentPage={false}>
+                  {"<<"}
                 </S.PageButton>
-              ))}
-              <S.PageButton
-                onClick={() => paginate(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                isCurrentPage={false}>
-                {">"}
-              </S.PageButton>
-              <S.PageButton
-                onClick={() => paginate(totalPages)}
-                disabled={currentPage === totalPages}
-                isCurrentPage={false}>
-                {">>"}
-              </S.PageButton>
-            </S.Pagination>
-          </S.MainBody>
-        )}
-      </S.Content>
-    </S.MainContainer>
+                <S.PageButton
+                  onClick={() => paginate(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  isCurrentPage={false}>
+                  {"<"}
+                </S.PageButton>
+                {Array.from(
+                  { length: endPage - startPage + 1 },
+                  (_, i) => startPage + i
+                ).map((pageNumber) => (
+                  <S.PageButton
+                    key={pageNumber}
+                    onClick={() => paginate(pageNumber)}
+                    isCurrentPage={currentPage === pageNumber}>
+                    {pageNumber}
+                  </S.PageButton>
+                ))}
+                <S.PageButton
+                  onClick={() => paginate(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  isCurrentPage={false}>
+                  {">"}
+                </S.PageButton>
+                <S.PageButton
+                  onClick={() => paginate(totalPages)}
+                  disabled={currentPage === totalPages}
+                  isCurrentPage={false}>
+                  {">>"}
+                </S.PageButton>
+              </S.Pagination>
+            </S.MainBody>
+          )}
+        </S.Content>
+      </S.MainContainer>
+      <S.CardNewsContainer>
+        <S.CardNewsHeader>
+          <CardNewsText />
+          <div style={{ height: "20px" }}></div>
+          <S.CardNewsHeaderA
+            href="https://www.instagram.com/3_lines_economy/"
+            target="_blank">
+            더보기 &gt;
+          </S.CardNewsHeaderA>
+        </S.CardNewsHeader>
+        <S.CardNewsList>
+          {posts.slice(0, 5).map((post, index) => (
+            <S.Card key={index}>
+              <h3>{post.title}</h3>
+              <ul>
+                <li>What: {post.what}</li>
+                <li>Why: {post.why}</li>
+                <li>How: {post.how}</li>
+              </ul>
+            </S.Card>
+          ))}
+        </S.CardNewsList>
+      </S.CardNewsContainer>
+    </>
   );
 };
 
