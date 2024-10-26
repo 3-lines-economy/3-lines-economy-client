@@ -16,9 +16,9 @@ const CustomCalendar = () => {
   const [value, setValue] = useRecoilState(calendarValueState);
   const router = useRouter();
 
-  const handleButtonClick = () => {
-    router.push("/board");
-  };
+  // const handleButtonClick = () => {
+  //   router.push("/main");
+  // };
 
   return (
     <>
@@ -31,10 +31,8 @@ const CustomCalendar = () => {
       {showCalendar && (
         <S.CalendarContainer>
           <Calendar
-            onClick={handleButtonClick}
             onChange={(e) => {
               setValue(e);
-              router.push("/board");
             }}
             value={value}
             formatDay={(locale, date) => moment(date).format("D")}
