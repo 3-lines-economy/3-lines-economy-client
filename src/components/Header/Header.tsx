@@ -1,48 +1,41 @@
 import React, { useState } from "react";
-import dynamic from "next/dynamic";
 import LogoSvg from "@public/logo.svg";
 import * as S from "./Header.style";
-
-// const Modal = dynamic(() => import("../modal/modal"), { ssr: false });
+import Modal from "../Modal/Modal";
+import KaKaoLoginSvg from "@public/kakao-login.svg";
 
 const Header: React.FC = () => {
-  //   const [modalOpen, setModalOpen] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
 
-  //   const handleModalOpen = () => {
-  //     setModalOpen(true);
-  //   };
+  const handleModalOpen = () => {
+    setModalOpen(true);
+  };
 
-  //   const handleModalClose = () => {
-  //     setModalOpen(false);
-  //   };
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
 
   return (
     <S.Container>
       <S.LeftContainer>
-        <S.HeaderItem
-          onClick={() => {
-            window.open(
-              "https://spectacled-goat-2e2.notion.site/d3c7e0857dc0453396aafc16f4278056?pvs=4",
-              "_blank"
-            );
-          }}>
-          세줄 경제 이야기
-        </S.HeaderItem>
+        <S.Logo>
+          <LogoSvg
+            onClick={() => {
+              window.location.href = "/";
+            }}
+            style={{ cursor: "pointer" }}
+          />
+        </S.Logo>
       </S.LeftContainer>
-      <S.Logo>
-        <LogoSvg
-          onClick={() => {
-            window.location.href = "/";
-          }}
-          style={{ cursor: "pointer" }}
-        />
-      </S.Logo>
-      <div></div>
-      {/* <S.SubscribeButton onClick={handleModalOpen}>
-        [세줄 경제] 구독하기
-      </S.SubscribeButton> */}
-      {/* <div></div> */}
-      {/* <Modal isOpen={modalOpen} onClose={handleModalClose} /> */}
+      <S.HeaderText onClick={handleModalOpen}>로그인</S.HeaderText>
+      <Modal isOpen={modalOpen} onClose={handleModalClose}>
+        <S.LoginContainer>
+          <S.LoginText>간편하게 로그인하고</S.LoginText>
+          <S.LoginText>세줄경제의 다양한 서비스를 이용해보세요.</S.LoginText>
+          <div style={{ height: "20px" }}></div>
+          <KaKaoLoginSvg />
+        </S.LoginContainer>
+      </Modal>
     </S.Container>
   );
 };

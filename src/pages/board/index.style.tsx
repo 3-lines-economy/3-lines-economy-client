@@ -8,7 +8,6 @@ export const MainContainer = styled.div`
 `;
 
 export const SideBarContainer = styled.div`
-  width: 200px;
   display: flex;
   flex-direction: column;
   padding: 20px;

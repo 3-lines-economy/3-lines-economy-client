@@ -3,7 +3,10 @@ import { useRouter } from "next/router";
 import { useSetRecoilState } from "recoil";
 import { calendarValueState } from "../../atoms/calendarAtom";
 import ArticleSvg from "@public/article.svg";
+import MainBanner from "@public/main-banner.svg";
 import * as S from "./index.style";
+import SideBar from "@/components/Sidebar/Sidebar";
+import CustomCalendar from "@/components/CustomCalendar/CustomCalendar";
 
 const Main: React.FC = () => {
   const router = useRouter();
@@ -66,9 +69,11 @@ const Main: React.FC = () => {
   return (
     <S.MainContainer>
       <S.SideBarContainer>
-        {/* <CustomCalendar isMobile={false} /> */}
+        <CustomCalendar />
+        <SideBar />
       </S.SideBarContainer>
       <S.Content>
+        <MainBanner />
         <S.MainBody>
           <S.ArticleList>
             {articles.map((article, index) => (

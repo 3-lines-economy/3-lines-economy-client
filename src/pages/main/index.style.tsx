@@ -5,14 +5,13 @@ export const MainContainer = styled.div`
   flex-direction: row;
   align-items: flex-start;
   padding: 20px;
+  margin: 0 100px;
 `;
 
 export const SideBarContainer = styled.div`
-  width: 200px;
   display: flex;
   flex-direction: column;
   padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 export const CustomText = styled.div`

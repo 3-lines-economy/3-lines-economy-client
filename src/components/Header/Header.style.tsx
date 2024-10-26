@@ -1,8 +1,8 @@
 import styled from "@emotion/styled";
 
 export const Container = styled.div`
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 100px;
+  padding-right: 100px;
   height: 60px;
   display: flex;
   align-items: center;
@@ -17,6 +17,7 @@ export const Container = styled.div`
 export const LeftContainer = styled.div`
   display: flex;
   gap: 20px;
+  /* margin-left: 100px; */
 
   @media (max-width: 768px) {
     display: none;
@@ -31,6 +32,12 @@ export const HeaderItem = styled.div`
   &:hover {
     color: rgba(25, 25, 27, 0.5);
   }
+`;
+
+export const HeaderText = styled.div`
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
 `;
 
 export const Logo = styled.div`
@@ -57,4 +64,14 @@ export const SubscribeButton = styled.button`
   @media (max-width: 768px) {
     display: none;
   }
+`;
+
+export const LoginContainer = styled.div`
+  padding-top: 20px;
+`;
+
+export const LoginText = styled.div`
+  font-size: 22px;
+  font-weight: 600;
+  text-align: center;
 `;
