@@ -134,7 +134,7 @@ export const Row = styled.div`
 
 export const Input = styled.textarea`
   width: 97%;
-  height: 85%;
+  height: 81%;
   padding: 0.5rem;
   font-size: 16px;
   color: #333;

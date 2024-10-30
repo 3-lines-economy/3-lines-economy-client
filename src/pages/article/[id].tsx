@@ -89,7 +89,7 @@ const ArticleDetail: React.FC = () => {
                   <strong>기사 내용의 수치화</strong>
                 </td>
                 <td>
-                  <S.Input placeholder="기사 내용 속 수치화 \n부분을 작성해 보세요." />
+                  <S.Input placeholder="기사 내용 속 수치화 부분을 작성해 보세요." />
                 </td>
               </tr>
               <tr>
