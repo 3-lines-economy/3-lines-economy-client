@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import RecoilRootWrapper from "./RecoilWrapper";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +18,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <Script
+        src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.3/kakao.min.js"
+        integrity="sha384-kLbo2SvoNtOFiniJ1EQ9o2iDA8i3xp+O6Cns+L5cd4RsOJfl+43z5pvieT2ayq3C"
+        crossOrigin="anonymous"></Script>
       <body className={inter.className}>
         <RecoilRootWrapper>{children}</RecoilRootWrapper>
       </body>
