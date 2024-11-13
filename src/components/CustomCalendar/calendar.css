@@ -105,7 +105,8 @@
   text-align: center;
   line-height: 16px;
   font: inherit;
-  font-size: 0.6em;
+  font-size: 14px;
+  color:#686868;
 }
 
 .react-calendar__tile:disabled {
@@ -143,13 +144,14 @@
 }
 
 .react-calendar__tile--active {
-  background: #006edc;
+  background: #292929;
+  border-radius: 50px;
   color: white;
 }
 
 .react-calendar__tile--active:enabled:hover,
 .react-calendar__tile--active:enabled:focus {
-  background: #1087ff;
+  background: #292929;
 }
 
 .react-calendar--selectRange .react-calendar__tile--hover {
