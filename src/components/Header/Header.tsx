@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import LogoSvg from "@public/logo.svg";
 import * as S from "./Header.style";
 import Modal from "../Modal/Modal";
-import KaKaoLoginSvg from "@public/kakao-login.svg";
-import SearchBar from "@/components/SearchBar/SearchBar";
 import PersonSvg from "@public/person.svg";
 import KakaoLogin from "../KakaoLogin/KakaoLogin";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { authState } from "@/atoms/authState";
 import { useRouter } from "next/router";
+import KaKaoLoginSvg from "@public/kakao-login.svg";
+import SearchBar from "@/components/SearchBar/SearchBar";
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -16,6 +16,7 @@ const Header: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [authStateValue, setAuthStateValue] = useRecoilState(authState);
+  const [searchData, onSearchData] = useState([]);
 
   const handleModalOpen = () => {
     setModalOpen(true);
@@ -52,6 +53,9 @@ const Header: React.FC = () => {
   const handleMynews = () => {
     router.push("/mynews");
   };
+  useEffect(() => {
+    console.log(searchData);
+  }, [searchData]);
 
   return (
     <S.Container>
@@ -64,7 +68,7 @@ const Header: React.FC = () => {
             style={{ cursor: "pointer" }}
           />
         </S.Logo>
-        <SearchBar />
+        <SearchBar onSearchResults={onSearchData} />
       </S.LeftContainer>
       {authStateValue.accessToken !== "" ? (
         <S.ProfileContainer>
