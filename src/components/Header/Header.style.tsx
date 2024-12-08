@@ -43,6 +43,7 @@ export const HeaderText = styled.div`
 export const Logo = styled.div`
   font-size: 24px;
   font-weight: bold;
+  margin: auto;
 
   @media (max-width: 768px) {
     font-size: 20px;
