@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import "./calendar.css";
 
 export const Container = styled.div`
   position: relative;
@@ -24,12 +25,12 @@ export const ToggleButton = styled.button<{ isOpen: boolean }>`
 
 export const CalendarDropdown = styled.div`
   position: absolute;
-  top: 40px; /* 버튼 바로 아래 위치 */
+  top: 40px;
+  width: 200px;
   right: 0;
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 16px;
   z-index: 10;
 `;

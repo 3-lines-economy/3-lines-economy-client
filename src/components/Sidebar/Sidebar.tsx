@@ -33,6 +33,7 @@ const SideBar: React.FC = () => {
           active={category.name === activeCategory}
           onClick={() => setActiveCategory(category.name)}>
           <Image src={category.icon} alt={`${category.name} icon`} />
+          <div style={{ width: "10px" }}></div>
           <span>{category.name}</span>
         </S.NavItem>
       ))}
