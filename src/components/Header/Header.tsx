@@ -68,7 +68,7 @@ const Header: React.FC = () => {
             style={{ cursor: "pointer" }}
           />
         </S.Logo>
-        <SearchBar />
+        <SearchBar onSearchResults={onSearchData} />
       </S.LeftContainer>
       {authStateValue.accessToken !== "" ? (
         <S.ProfileContainer>
