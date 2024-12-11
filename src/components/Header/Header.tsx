@@ -7,7 +7,6 @@ import SearchBar from "@/components/SearchBar/SearchBar";
 
 const Header: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [searchData, onSearchData] = useState([]);
 
   const handleModalOpen = () => {
     setModalOpen(true);
@@ -16,10 +15,6 @@ const Header: React.FC = () => {
   const handleModalClose = () => {
     setModalOpen(false);
   };
-
-  useEffect(() => {
-    console.log(searchData);
-  }, [searchData]);
 
   return (
     <S.Container>
@@ -32,7 +27,7 @@ const Header: React.FC = () => {
             style={{ cursor: "pointer" }}
           />
         </S.Logo>
-        <SearchBar onSearchResults={onSearchData} />
+        <SearchBar />
       </S.LeftContainer>
       <S.HeaderText onClick={handleModalOpen}>로그인</S.HeaderText>
       <Modal isOpen={modalOpen} onClose={handleModalClose}>
