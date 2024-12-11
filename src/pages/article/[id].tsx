@@ -20,7 +20,7 @@ const ArticleDetail: React.FC = () => {
           <div style={{ width: "15px" }}></div>
           <S.Title>{article.title}</S.Title>
         </div>
-        <S.Date>{article.datetime.split(" ")[0].replace(/-/g, ".")}</S.Date>
+        <S.Date>{article.publishedAt}</S.Date>
       </S.ArticleHeader>
 
       <S.Summary>

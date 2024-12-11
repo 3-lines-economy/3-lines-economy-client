@@ -1,10 +1,10 @@
 export type Post = {
-  datetime: string;
+  id: number;
   title: string;
-  content: string;
   category: string;
   link: string;
   what: string;
   why: string;
   how: string;
+  publishedAt: string;
 };
