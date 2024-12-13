@@ -9,6 +9,7 @@ import { authState } from "@/atoms/authState";
 import { useRouter } from "next/router";
 import KaKaoLoginSvg from "@public/kakao-login.svg";
 import SearchBar from "@/components/SearchBar/SearchBar";
+import KakaoLogin from "../KakaoLogin/KakaoLogin";
 
 const Header: React.FC = () => {
   const router = useRouter();
