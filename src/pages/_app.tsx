@@ -11,7 +11,6 @@ function MyApp({ Component, pageProps }: AppProps) {
         strategy="beforeInteractive"
         src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=mhvjuj53xv"
       />
-      {/* 카카오 로그인 위해 추가 */}
       <script src="https://developers.kakao.com/sdk/js/kakao.js" defer></script>
       <Component {...pageProps} />
     </RecoilRootWrapper>

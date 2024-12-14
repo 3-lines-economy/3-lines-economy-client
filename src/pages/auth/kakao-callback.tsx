@@ -1,4 +1,3 @@
-// pages/kakao-callback.tsx
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
@@ -6,7 +5,7 @@ export default function KakaoCallback() {
   const router = useRouter();
 
   useEffect(() => {
-    const { code } = router.query; // Query에서 Authorization Code를 가져옵니다.
+    const { code } = router.query;
 
     if (code) {
       sendCodeToServer(code as string);
