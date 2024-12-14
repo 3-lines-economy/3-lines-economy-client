@@ -68,6 +68,11 @@ export const SummaryContent = styled.div`
   }
 `;
 
+export const SaveButton = styled.div`
+  font-size: 20px;
+  color: #292929;
+`;
+
 export const LinkButton = styled.a`
   display: inline-block;
   margin-top: 1rem;
@@ -90,7 +95,6 @@ export const ToggleButton = styled.button`
   color: #333;
   font-size: 24px;
   cursor: pointer;
-  margin-top: 1rem;
 `;
 
 export const ExpandableSection = styled.div`
