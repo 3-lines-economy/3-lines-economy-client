@@ -4,11 +4,13 @@ import * as S from "./article.style";
 import { useRecoilValue } from "recoil";
 import { selectedArticleState } from "@/atoms/selectedArticleAtom";
 import SaveSvg from "@public/save-button.svg";
+import { useFetch } from "@/hooks/useFetch";
 
 const ArticleDetail: React.FC = () => {
   const router = useRouter();
   const article = useRecoilValue(selectedArticleState);
   const [isExpanded, setIsExpanded] = useState(false);
+  const { request, loading, error } = useFetch();
 
   const [formData, setFormData] = useState({
     summary: "",
@@ -44,22 +46,17 @@ const ArticleDetail: React.FC = () => {
     };
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_NEW}scrap`, {
+      const response = await request("news/scrap", null, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
-      if (response.ok) {
-        alert("내용이 성공적으로 저장되었습니다!");
-      } else {
-        alert("저장 중 오류가 발생했습니다.");
-      }
+      alert("내용이 성공적으로 저장되었습니다!");
+      console.log("Save response:", response);
     } catch (error) {
-      console.error("Error saving data:", error);
       alert("저장 중 오류가 발생했습니다.");
+      console.error("Save error:", error);
     }
   };
 
@@ -115,6 +112,7 @@ const ArticleDetail: React.FC = () => {
           <S.SaveButton onClick={handleSave}>내용 저장</S.SaveButton>
         </div>
       </div>
+      {error && <p style={{ color: "red" }}>저장 중 오류: {error}</p>}
       {isExpanded && (
         <S.ExpandableSection>
           <S.Table>
