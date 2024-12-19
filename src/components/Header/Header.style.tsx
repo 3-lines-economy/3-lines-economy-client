@@ -76,3 +76,54 @@ export const LoginText = styled.div`
   font-weight: 600;
   text-align: center;
 `;
+
+export const ProfileContainer = styled.div`
+  position: relative;
+`;
+
+export const ProfileIcon = styled.div`
+  cursor: pointer;
+`;
+
+export const DropdownMenu = styled.div`
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  width: 200px;
+  z-index: 10;
+  padding: 10px;
+`;
+
+export const DropdownItem = styled.div`
+  padding: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  &:hover {
+    background-color: #f9f9f9;
+  }
+  :has(> span) {
+    color: #ced4da;
+    cursor: default;
+    :hover {
+      background-color: transparent;
+    }
+  }
+
+  :has(> strong) {
+    font-size: 18px;
+    cursor: default;
+    :hover {
+      background-color: transparent;
+    }
+  }
+`;
+
+export const Divider = styled.div`
+  height: 1px;
+  background-color: #ddd;
+  margin: 5px 0;
+`;
