@@ -1,8 +1,6 @@
 import { useState } from "react";
 
 class LocalStorage {
-  constructor() {}
-
   static setItem(key: string, item: string) {
     if (typeof window !== "undefined") {
       localStorage.setItem(key, item);
@@ -25,8 +23,13 @@ class LocalStorage {
 
 function useLocalStorage<T>(key: string, initialValue: T) {
   const [storedValue, setStoredValue] = useState<T>(() => {
-    const item = LocalStorage.getItem(key);
-    return item ? JSON.parse(item) : initialValue;
+    try {
+      const item = LocalStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      console.error("Error reading localStorage key:", key, error);
+      return initialValue;
+    }
   });
 
   const setValue = (value: T | ((val: T) => T)) => {
