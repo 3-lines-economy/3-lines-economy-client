@@ -20,6 +20,7 @@ const Main: React.FC = () => {
   const [totalElements, setTotalElements] = useState(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedDate] = useRecoilState(calendarValueState);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(null);
   const setSelectedArticle = useSetRecoilState(selectedArticleState);
   const [mounted, setMounted] = useState(false);
 
@@ -44,13 +45,26 @@ const Main: React.FC = () => {
     setCurrentPage(pageNumber);
   };
 
+  const handleCategorySelect = (category: CategoryType) => {
+    setSelectedCategory(category);
+    setCurrentPage(1); // 카테고리 선택 시 페이지 1로 리셋
+  };
+
   const fetchData = async () => {
     if (!selectedDate) return;
 
     setIsLoading(true);
     const formattedDate = selectedDate.toISOString().split("T")[0].replace(/-/g, "");
-    const baseUrl = `${process.env.NEXT_PUBLIC_API}news`;
-    const url = `${baseUrl}?path=news&date=${formattedDate}&page=${currentPage}`;
+    const baseUrl = `${process.env.NEXT_PUBLIC_API}`;
+
+    let url;
+    if (selectedCategory) {
+      // 카테고리가 선택된 경우 카테고리 기준 API 호출
+      url = `${baseUrl}news/by-category?category=${selectedCategory}&page=${currentPage}`;
+    } else {
+      // 기존 날짜 기준 API 호출
+      url = `${baseUrl}news?path=news&date=${formattedDate}&page=${currentPage}`;
+    }
 
     try {
       const response = await fetch(url, { method: "GET" });
@@ -80,10 +94,10 @@ const Main: React.FC = () => {
   };
 
   useEffect(() => {
-    if (mounted && selectedDate) {
+    if (mounted && (selectedDate || selectedCategory)) {
       fetchData();
     }
-  }, [selectedDate, mounted, currentPage]);
+  }, [selectedDate, selectedCategory, mounted, currentPage]);
 
   // 하이드레이션 전에는 아무것도 렌더링하지 않음
   if (!mounted) {
@@ -95,7 +109,7 @@ const Main: React.FC = () => {
       <S.MainContainer>
         <S.SideBarContainer>
           <CustomCalendar />
-          <SideBar />
+          <SideBar onCategorySelect={handleCategorySelect} selectedCategory={selectedCategory} />
         </S.SideBarContainer>
         <S.Content>
           <MainBanner />
