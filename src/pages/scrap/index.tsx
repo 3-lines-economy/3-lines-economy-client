@@ -15,18 +15,58 @@ const Scrap: React.FC = () => {
   const [selectedDate] = useRecoilState(calendarValueState);
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [totalElements, setTotalElements] = useState(0);
+  const [totalPages, setTotalPages] = useState(10);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const startPage = 1;
   const endPage = 5;
-  const totalPages = 10;
 
   const fetchData = async () => {
-    // TODO 스크랩 불러오기 api
+    if (!selectedDate || !mounted) return;
+
+    setIsLoading(true);
+    const formattedDate = selectedDate.toISOString().split("T")[0].replace(/-/g, "");
+    const baseUrl = `${process.env.NEXT_PUBLIC_API}news`;
+    const url = `${baseUrl}?date=${formattedDate}&page=${currentPage}&category=${selectedCategory !== "전체" ? selectedCategory : ""}`;
+
+    try {
+      const response = await fetch(url, { method: "GET" });
+      if (!response.ok) throw new Error(`Error: ${response.status}`);
+      const data = await response.json();
+      if (data.status !== 200) return;
+
+      const articles = data.body.newsList.map((article: any) => ({
+        id: article.id,
+        link: article.link,
+        category: article.category,
+        title: article.title,
+        publishedAt: article.publishedAt,
+        what: article.what,
+        why: article.why,
+        how: article.how,
+      }));
+
+      setPosts(articles);
+      setTotalPages(data.body.totalPages);
+      setTotalElements(data.body.totalElements);
+    } catch (error) {
+      console.error("스크랩 데이터 불러오기 실패:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
-    fetchData();
-  }, [selectedDate, currentPage, selectedCategory]);
+    if (mounted && selectedDate) {
+      fetchData();
+    }
+  }, [selectedDate, currentPage, selectedCategory, mounted]);
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
@@ -34,6 +74,10 @@ const Scrap: React.FC = () => {
   };
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <S.Container>
@@ -52,15 +96,19 @@ const Scrap: React.FC = () => {
         </S.DateDropdown>
       )}
 
-      <S.PostList>
-        {posts.map((post, index) => (
-          <S.PostItem key={index}>
-            <S.PostItemLeft>{post.category}</S.PostItemLeft>
-            <S.PostItemCenter>{post.title}</S.PostItemCenter>
-            <S.PostItemRight>{post.publishedAt}</S.PostItemRight>
-          </S.PostItem>
-        ))}
-      </S.PostList>
+      {isLoading ? (
+        <S.LoadingMessage>Loading...</S.LoadingMessage>
+      ) : (
+        <S.PostList>
+          {posts.map((post, index) => (
+            <S.PostItem key={post.id || index}>
+              <S.PostItemLeft>{post.category}</S.PostItemLeft>
+              <S.PostItemCenter>{post.title}</S.PostItemCenter>
+              <S.PostItemRight>{post.publishedAt.split(" ")[0].replace(/-/g, ".")}</S.PostItemRight>
+            </S.PostItem>
+          ))}
+        </S.PostList>
+      )}
 
       <S.Pagination>
         <S.PageButton onClick={() => paginate(1)} disabled={currentPage === 1} isCurrentPage={false}>
