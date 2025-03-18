@@ -73,8 +73,7 @@ export const PageButton = styled.button<{ isCurrentPage: boolean }>`
   width: 40px;
   text-align: center;
   color: ${(props) => (props.isCurrentPage ? "white" : "#888888")};
-  background-color: ${(props) =>
-    props.isCurrentPage ? "black" : "transparent"};
+  background-color: ${(props) => (props.isCurrentPage ? "black" : "transparent")};
   border-radius: 5px;
 
   &:hover {
@@ -139,4 +138,13 @@ export const PostItemCenter = styled.div`
 
 export const PostItemRight = styled.div`
   color: rgba(173, 173, 173, 1);
+`;
+
+export const LoadingMessage = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  font-size: 18px;
+  color: #666;
 `;
