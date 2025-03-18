@@ -40,14 +40,9 @@ const Scrap: React.FC = () => {
 
   // 페이지네이션 로직 수정
   const calculcatePagination = () => {
-    if (isMobile) {
-      // 모바일에서는 현재 페이지 기준 앞뒤로 1페이지씩만 표시
-      const startFromPage = Math.max(1, currentPage - 1);
-      const endAtPage = Math.min(totalPages, currentPage + 1);
-      return { startPage: startFromPage, endPage: endAtPage };
-    } else {
-      return { startPage: 1, endPage: 5 };
-    }
+    const startFromPage = Math.max(1, currentPage - 2);
+    const endAtPage = Math.min(totalPages, currentPage + 2);
+    return { startPage: startFromPage, endPage: endAtPage };
   };
 
   const { startPage, endPage } = calculcatePagination();
