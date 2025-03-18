@@ -27,12 +27,6 @@ const Main: React.FC = () => {
     setMounted(true);
   }, []);
 
-  const indexOfLastPost = currentPage * 10;
-  const indexOfFirstPost = indexOfLastPost - 10;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
-
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
   const PageGroupSize = 5;
   const currentGroup = Math.ceil(currentPage / PageGroupSize);
   const startPage = (currentGroup - 1) * PageGroupSize + 1;
@@ -45,13 +39,17 @@ const Main: React.FC = () => {
     router.push(`/article/${post.link.split("/").pop()}`);
   };
 
+  const paginate = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
   const fetchData = async () => {
     if (!selectedDate) return;
 
     setIsLoading(true);
     const formattedDate = selectedDate.toISOString().split("T")[0].replace(/-/g, "");
     const baseUrl = `${process.env.NEXT_PUBLIC_API}news`;
-    const url = `${baseUrl}?path=news&date=${formattedDate}`;
+    const url = `${baseUrl}?path=news&date=${formattedDate}&page=${currentPage}`;
 
     try {
       const response = await fetch(url, { method: "GET" });
@@ -72,7 +70,6 @@ const Main: React.FC = () => {
 
       setPosts(articles);
       setTotalPages(data.body.totalPages);
-      setCurrentPage(data.body.currentPage);
       setTotalElements(data.body.totalElements);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -85,7 +82,7 @@ const Main: React.FC = () => {
     if (mounted && selectedDate) {
       fetchData();
     }
-  }, [selectedDate, mounted]);
+  }, [selectedDate, mounted, currentPage]);
 
   // 하이드레이션 전에는 아무것도 렌더링하지 않음
   if (!mounted) {
@@ -106,7 +103,7 @@ const Main: React.FC = () => {
           ) : (
             <S.MainBody>
               <S.PostList>
-                {currentPosts.map((post, index) => (
+                {posts.map((post, index) => (
                   <S.PostItem key={post.id || index} onClick={() => handleArticleClick(post)}>
                     <S.PostItemLeft>{post.category}</S.PostItemLeft>
                     <S.PostItemCenter>{post.title}</S.PostItemCenter>
