@@ -38,8 +38,10 @@ export const FilterContainer = styled.div`
   margin-bottom: 20px;
 
   @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
     gap: 15px;
   }
 `;
@@ -64,8 +66,9 @@ export const DateFilter = styled.div`
   position: relative;
 
   @media (max-width: 768px) {
-    margin-left: 0;
-    width: 100%;
+    margin-left: auto;
+    width: auto;
+    padding-bottom: 5px;
   }
 `;
 

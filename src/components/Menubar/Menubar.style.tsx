@@ -5,15 +5,18 @@ export const Container = styled.div`
   gap: 10px;
   padding: 10px 0;
   overflow-x: auto;
+  flex: 1;
 
   @media (max-width: 768px) {
     padding: 5px 0;
-    width: 100%;
+    width: auto;
+    max-width: 70%;
     -webkit-overflow-scrolling: touch;
     &::-webkit-scrollbar {
       display: none;
     }
     scrollbar-width: none;
+    padding-bottom: 8px;
   }
 `;
 

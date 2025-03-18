@@ -22,6 +22,7 @@ export const ToggleButton = styled.button<{ isOpen: boolean }>`
   cursor: pointer;
   font-size: 14px;
   color: #333;
+  white-space: nowrap;
 
   &:hover {
     background-color: #f5f5f5;
