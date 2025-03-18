@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import * as S from "./index.style";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { calendarValueState } from "../../atoms/calendarAtom";
+import { selectedArticleState } from "../../atoms/selectedArticleAtom";
 import CustomCalendar from "@/components/CustomCalendar/CustomCalendar";
 import { Post } from "@/types/post";
 import CustomCalendarDropdown from "@/components/CustomCalendarDropdown/CustomCalendarDropdown";
 import Menubar from "@/components/Menubar/Menubar";
+import { CategoryMap, CategoryType } from "../../types/category";
+import { useRouter } from "next/router";
 
 const PostsPerPage = 10;
 
@@ -19,6 +22,8 @@ const Scrap: React.FC = () => {
   const [totalElements, setTotalElements] = useState(0);
   const [totalPages, setTotalPages] = useState(10);
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
+  const setSelectedArticle = useSetRecoilState(selectedArticleState);
 
   useEffect(() => {
     setMounted(true);
@@ -75,6 +80,11 @@ const Scrap: React.FC = () => {
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
+  const handleArticleClick = (post: Post) => {
+    setSelectedArticle(post);
+    router.push(`/detail/${post.id}`);
+  };
+
   if (!mounted) {
     return null;
   }
@@ -101,8 +111,8 @@ const Scrap: React.FC = () => {
       ) : (
         <S.PostList>
           {posts.map((post, index) => (
-            <S.PostItem key={post.id || index}>
-              <S.PostItemLeft>{post.category}</S.PostItemLeft>
+            <S.PostItem key={post.id || index} onClick={() => handleArticleClick(post)}>
+              <S.PostItemLeft>{CategoryMap[post.category as CategoryType] || post.category}</S.PostItemLeft>
               <S.PostItemCenter>{post.title}</S.PostItemCenter>
               <S.PostItemRight>{post.publishedAt.split(" ")[0].replace(/-/g, ".")}</S.PostItemRight>
             </S.PostItem>

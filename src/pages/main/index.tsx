@@ -11,6 +11,7 @@ import SideBar from "@/components/Sidebar/Sidebar";
 import { selectedArticleState } from "@/atoms/selectedArticleAtom";
 import CustomCalendar from "@/components/CustomCalendar/CustomCalendar";
 import { Post } from "@/types/post";
+import { CategoryMap, CategoryType } from "../../types/category";
 
 const Main: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -105,7 +106,7 @@ const Main: React.FC = () => {
               <S.PostList>
                 {posts.map((post, index) => (
                   <S.PostItem key={post.id || index} onClick={() => handleArticleClick(post)}>
-                    <S.PostItemLeft>{post.category}</S.PostItemLeft>
+                    <S.PostItemLeft>{CategoryMap[post.category as CategoryType] || post.category}</S.PostItemLeft>
                     <S.PostItemCenter>{post.title}</S.PostItemCenter>
                     <S.PostItemRight>{post.publishedAt.split(" ")[0].replace(/-/g, ".")}</S.PostItemRight>
                   </S.PostItem>

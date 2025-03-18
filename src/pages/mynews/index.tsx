@@ -6,6 +6,10 @@ import CustomCalendar from "@/components/CustomCalendar/CustomCalendar";
 import { Post } from "@/types/post";
 import CustomCalendarDropdown from "@/components/CustomCalendarDropdown/CustomCalendarDropdown";
 import Menubar from "@/components/Menubar/Menubar";
+import { CategoryMap, CategoryType } from "../../types/category";
+import { useRouter } from "next/router";
+import { useSetRecoilState } from "recoil";
+import { selectedArticleState } from "../../atoms/selectedArticleAtom";
 
 const MyNews: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -13,6 +17,8 @@ const MyNews: React.FC = () => {
   const [selectedDate] = useRecoilState(calendarValueState);
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const router = useRouter();
+  const setSelectedArticle = useSetRecoilState(selectedArticleState);
 
   const startPage = 1;
   const endPage = 5;
@@ -33,6 +39,11 @@ const MyNews: React.FC = () => {
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
+  const handleArticleClick = (post: Post) => {
+    setSelectedArticle(post);
+    router.push(`/detail/${post.id}`);
+  };
+
   return (
     <S.Container>
       <S.Title>경제 신문 정리함</S.Title>
@@ -52,48 +63,30 @@ const MyNews: React.FC = () => {
 
       <S.PostList>
         {posts.map((post, index) => (
-          <S.PostItem key={index}>
-            <S.PostItemLeft>{post.category}</S.PostItemLeft>
+          <S.PostItem key={post.id} onClick={() => handleArticleClick(post)}>
+            <S.PostItemLeft>{CategoryMap[post.category as CategoryType] || post.category}</S.PostItemLeft>
             <S.PostItemCenter>{post.title}</S.PostItemCenter>
-            <S.PostItemRight>{post.datetime}</S.PostItemRight>
+            <S.PostItemRight>{post.publishedAt.split(" ")[0].replace(/-/g, ".")}</S.PostItemRight>
           </S.PostItem>
         ))}
       </S.PostList>
 
       <S.Pagination>
-        <S.PageButton
-          onClick={() => paginate(1)}
-          disabled={currentPage === 1}
-          isCurrentPage={false}>
+        <S.PageButton onClick={() => paginate(1)} disabled={currentPage === 1} isCurrentPage={false}>
           {"<<"}
         </S.PageButton>
-        <S.PageButton
-          onClick={() => paginate(currentPage - 1)}
-          disabled={currentPage === 1}
-          isCurrentPage={false}>
+        <S.PageButton onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} isCurrentPage={false}>
           {"<"}
         </S.PageButton>
-        {Array.from(
-          { length: endPage - startPage + 1 },
-          (_, i) => startPage + i
-        ).map((pageNumber) => (
-          <S.PageButton
-            key={pageNumber}
-            onClick={() => paginate(pageNumber)}
-            isCurrentPage={currentPage === pageNumber}>
+        {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((pageNumber) => (
+          <S.PageButton key={pageNumber} onClick={() => paginate(pageNumber)} isCurrentPage={currentPage === pageNumber}>
             {pageNumber}
           </S.PageButton>
         ))}
-        <S.PageButton
-          onClick={() => paginate(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          isCurrentPage={false}>
+        <S.PageButton onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} isCurrentPage={false}>
           {">"}
         </S.PageButton>
-        <S.PageButton
-          onClick={() => paginate(totalPages)}
-          disabled={currentPage === totalPages}
-          isCurrentPage={false}>
+        <S.PageButton onClick={() => paginate(totalPages)} disabled={currentPage === totalPages} isCurrentPage={false}>
           {">>"}
         </S.PageButton>
       </S.Pagination>
