@@ -3,8 +3,8 @@ export enum CategoryType {
   ECONOMY = "ECONOMY",
   POLITICS = "POLITICS",
   SOCIETY = "SOCIETY",
-  LIFE = "LIFE",
-  IT = "IT",
+  LIFESTYLE_CULTURE = "LIFESTYLE_CULTURE",
+  IT_SCIENCE = "IT_SCIENCE",
   WORLD = "WORLD",
 }
 
@@ -13,8 +13,8 @@ export const CategoryMap: Record<CategoryType, string> = {
   [CategoryType.ECONOMY]: "경제",
   [CategoryType.POLITICS]: "정치",
   [CategoryType.SOCIETY]: "사회",
-  [CategoryType.LIFE]: "생활/문화",
-  [CategoryType.IT]: "IT/과학",
+  [CategoryType.LIFESTYLE_CULTURE]: "생활/문화",
+  [CategoryType.IT_SCIENCE]: "IT/과학",
   [CategoryType.WORLD]: "세계",
 };
 
@@ -23,7 +23,7 @@ export const reverseCategoryMap: Record<string, CategoryType> = {
   경제: CategoryType.ECONOMY,
   정치: CategoryType.POLITICS,
   사회: CategoryType.SOCIETY,
-  "생활/문화": CategoryType.LIFE,
-  "IT/과학": CategoryType.IT,
+  "생활/문화": CategoryType.LIFESTYLE_CULTURE,
+  "IT/과학": CategoryType.IT_SCIENCE,
   세계: CategoryType.WORLD,
 };

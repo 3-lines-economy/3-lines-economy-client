@@ -17,8 +17,8 @@ const categories = [
   { name: CategoryType.ECONOMY, displayName: CategoryMap[CategoryType.ECONOMY], icon: EconomyIcon },
   { name: CategoryType.POLITICS, displayName: CategoryMap[CategoryType.POLITICS], icon: PolicyIcon },
   { name: CategoryType.SOCIETY, displayName: CategoryMap[CategoryType.SOCIETY], icon: SocietyIcon },
-  { name: CategoryType.LIFE, displayName: CategoryMap[CategoryType.LIFE], icon: LifeIcon },
-  { name: CategoryType.IT, displayName: CategoryMap[CategoryType.IT], icon: ITIcon },
+  { name: CategoryType.LIFESTYLE_CULTURE, displayName: CategoryMap[CategoryType.LIFESTYLE_CULTURE], icon: LifeIcon },
+  { name: CategoryType.IT_SCIENCE, displayName: CategoryMap[CategoryType.IT_SCIENCE], icon: ITIcon },
   { name: CategoryType.WORLD, displayName: CategoryMap[CategoryType.WORLD], icon: WorldIcon },
 ];
 
