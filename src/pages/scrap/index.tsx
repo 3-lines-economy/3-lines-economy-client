@@ -113,8 +113,8 @@ const Scrap: React.FC = () => {
           {posts.map((post, index) => (
             <S.PostItem key={post.id || index} onClick={() => handleArticleClick(post)}>
               <S.PostItemLeft>
-                <img src="/bookmark.svg" alt="bookmark" style={{ marginRight: "8px" }} />
-                {CategoryMap[post.category as CategoryType] || post.category}
+                <img src="/bookmark.svg" alt="bookmark" style={{ marginRight: "8px", verticalAlign: "middle" }} />
+                <span style={{ verticalAlign: "middle" }}>{CategoryMap[post.category as CategoryType] || post.category}</span>
               </S.PostItemLeft>
               <S.PostItemCenter>{post.title}</S.PostItemCenter>
               <S.PostItemRight>{post.publishedAt.split(" ")[0].replace(/-/g, ".")}</S.PostItemRight>
