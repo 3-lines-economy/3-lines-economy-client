@@ -7,7 +7,7 @@ import CustomCalendar from "@/components/CustomCalendar/CustomCalendar";
 import { Post } from "@/types/post";
 import CustomCalendarDropdown from "@/components/CustomCalendarDropdown/CustomCalendarDropdown";
 import Menubar from "@/components/Menubar/Menubar";
-import { CategoryMap, CategoryType } from "../../types/category";
+import { CategoryType, ScrapCategoryMap } from "../../types/category";
 import { useRouter } from "next/router";
 
 const PostsPerPage = 10;
@@ -144,7 +144,7 @@ const Scrap: React.FC = () => {
                       flexShrink: 0,
                     }}
                   />
-                  <span style={{ verticalAlign: "middle" }}>{CategoryMap[post.category as CategoryType] || post.category}</span>
+                  <span style={{ verticalAlign: "middle" }}>{ScrapCategoryMap[post.category as CategoryType] || post.category}</span>
                 </S.PostItemLeft>
                 <S.PostItemCenter>{post.title}</S.PostItemCenter>
                 <S.PostItemRight>{post.publishedAt.split(" ")[0].replace(/-/g, ".")}</S.PostItemRight>
