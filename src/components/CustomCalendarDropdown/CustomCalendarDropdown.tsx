@@ -13,6 +13,20 @@ import Image from "next/image";
 const CustomCalendarDropdown = () => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [value, setValue] = useRecoilState(calendarValueState);
+  const [viewMode, setViewMode] = useState<"month" | "year">("month");
+  const [activeDate, setActiveDate] = useState(new Date());
+
+  const handleYearMonthClick = () => {
+    setViewMode(viewMode === "month" ? "year" : "month");
+  };
+
+  const goToPrevMonth = () => {
+    setActiveDate(new Date(activeDate.getFullYear(), activeDate.getMonth() - 1, 1));
+  };
+
+  const goToNextMonth = () => {
+    setActiveDate(new Date(activeDate.getFullYear(), activeDate.getMonth() + 1, 1));
+  };
 
   return (
     <S.Container>
@@ -29,11 +43,64 @@ const CustomCalendarDropdown = () => {
             onChange={(e) => setValue(e as any)}
             value={value}
             formatDay={(locale, date) => moment(date).format("D")}
-            formatMonthYear={(locale, date) => moment(date).format("YYYY. MM")}
+            formatMonthYear={(locale, date) => moment(date).format("YYYY년 M월")}
             showNeighboringMonth={false}
             next2Label={null}
             prev2Label={null}
+            nextLabel={null}
+            prevLabel={null}
             minDetail="year"
+            activeStartDate={activeDate}
+            onActiveStartDateChange={({ activeStartDate }) => activeStartDate && setActiveDate(activeStartDate)}
+            navigationLabel={({ date, label }) => (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <span onClick={handleYearMonthClick} style={{ cursor: "pointer" }}>
+                  {moment(date).format("YYYY년 M월")}
+                </span>
+                <div style={{ display: "flex", gap: "10px" }}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      goToPrevMonth();
+                    }}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      fontSize: "18px",
+                    }}
+                  >
+                    ◀
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      goToNextMonth();
+                    }}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      fontSize: "18px",
+                    }}
+                  >
+                    ▶
+                  </button>
+                </div>
+              </div>
+            )}
+            view={viewMode}
+            onViewChange={({ activeStartDate, view }) => {
+              setViewMode(view as "month" | "year");
+              if (activeStartDate) setActiveDate(activeStartDate);
+            }}
           />
         </S.CalendarDropdown>
       )}
