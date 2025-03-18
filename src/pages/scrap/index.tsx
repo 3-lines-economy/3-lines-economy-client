@@ -57,45 +57,27 @@ const Scrap: React.FC = () => {
           <S.PostItem key={index}>
             <S.PostItemLeft>{post.category}</S.PostItemLeft>
             <S.PostItemCenter>{post.title}</S.PostItemCenter>
-            <S.PostItemRight>{post.datetime}</S.PostItemRight>
+            <S.PostItemRight>{post.publishedAt}</S.PostItemRight>
           </S.PostItem>
         ))}
       </S.PostList>
 
       <S.Pagination>
-        <S.PageButton
-          onClick={() => paginate(1)}
-          disabled={currentPage === 1}
-          isCurrentPage={false}>
+        <S.PageButton onClick={() => paginate(1)} disabled={currentPage === 1} isCurrentPage={false}>
           {"<<"}
         </S.PageButton>
-        <S.PageButton
-          onClick={() => paginate(currentPage - 1)}
-          disabled={currentPage === 1}
-          isCurrentPage={false}>
+        <S.PageButton onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} isCurrentPage={false}>
           {"<"}
         </S.PageButton>
-        {Array.from(
-          { length: endPage - startPage + 1 },
-          (_, i) => startPage + i
-        ).map((pageNumber) => (
-          <S.PageButton
-            key={pageNumber}
-            onClick={() => paginate(pageNumber)}
-            isCurrentPage={currentPage === pageNumber}>
+        {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((pageNumber) => (
+          <S.PageButton key={pageNumber} onClick={() => paginate(pageNumber)} isCurrentPage={currentPage === pageNumber}>
             {pageNumber}
           </S.PageButton>
         ))}
-        <S.PageButton
-          onClick={() => paginate(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          isCurrentPage={false}>
+        <S.PageButton onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} isCurrentPage={false}>
           {">"}
         </S.PageButton>
-        <S.PageButton
-          onClick={() => paginate(totalPages)}
-          disabled={currentPage === totalPages}
-          isCurrentPage={false}>
+        <S.PageButton onClick={() => paginate(totalPages)} disabled={currentPage === totalPages} isCurrentPage={false}>
           {">>"}
         </S.PageButton>
       </S.Pagination>
