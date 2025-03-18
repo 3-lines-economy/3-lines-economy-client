@@ -10,11 +10,13 @@ function InitializeAuthState() {
   const setAuth = useSetRecoilState(authState);
 
   useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken");
-    const refreshToken = localStorage.getItem("refreshToken");
+    if (typeof window !== "undefined") {
+      const accessToken = localStorage.getItem("accessToken");
+      const refreshToken = localStorage.getItem("refreshToken");
 
-    if (accessToken && refreshToken) {
-      setAuth({ accessToken, refreshToken });
+      if (accessToken && refreshToken) {
+        setAuth({ accessToken, refreshToken });
+      }
     }
   }, [setAuth]);
 
@@ -26,10 +28,7 @@ function MyApp({ Component, pageProps }: AppProps) {
     <RecoilRootWrapper>
       <InitializeAuthState />
       <Header />
-      <Script
-        strategy="beforeInteractive"
-        src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=mhvjuj53xv"
-      />
+      <Script strategy="beforeInteractive" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=mhvjuj53xv" />
       <script src="https://developers.kakao.com/sdk/js/kakao.js" defer></script>
       <Component {...pageProps} />
     </RecoilRootWrapper>
