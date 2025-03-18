@@ -12,12 +12,11 @@ import { selectedArticleState } from "@/atoms/selectedArticleAtom";
 import CustomCalendar from "@/components/CustomCalendar/CustomCalendar";
 import { Post } from "@/types/post";
 
-const PostsPerPage = 10;
-const PageGroupSize = 5;
-
 const Main: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedDate] = useRecoilState(calendarValueState);
   const setSelectedArticle = useSetRecoilState(selectedArticleState);
@@ -28,14 +27,13 @@ const Main: React.FC = () => {
     setMounted(true);
   }, []);
 
-  const totalPages = Math.ceil(posts.length / PostsPerPage);
-
-  const indexOfLastPost = currentPage * PostsPerPage;
-  const indexOfFirstPost = indexOfLastPost - PostsPerPage;
+  const indexOfLastPost = currentPage * 10;
+  const indexOfFirstPost = indexOfLastPost - 10;
   const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
 
+  const PageGroupSize = 5;
   const currentGroup = Math.ceil(currentPage / PageGroupSize);
   const startPage = (currentGroup - 1) * PageGroupSize + 1;
   const endPage = Math.min(currentGroup * PageGroupSize, totalPages);
@@ -59,19 +57,23 @@ const Main: React.FC = () => {
       const response = await fetch(url, { method: "GET" });
       if (!response.ok) throw new Error(`Error: ${response.status}`);
       const data = await response.json();
-      if (data.statusCode === 500) return;
+      if (data.status !== 200) return;
 
       const articles = data.body.newsList.map((article: any) => ({
+        id: article.id,
         link: article.link,
         category: article.category,
         title: article.title,
         publishedAt: article.publishedAt,
-        content: article.content,
         what: article.what,
         why: article.why,
         how: article.how,
       }));
+
       setPosts(articles);
+      setTotalPages(data.body.totalPages);
+      setCurrentPage(data.body.currentPage);
+      setTotalElements(data.body.totalElements);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -105,7 +107,7 @@ const Main: React.FC = () => {
             <S.MainBody>
               <S.PostList>
                 {currentPosts.map((post, index) => (
-                  <S.PostItem key={index} onClick={() => handleArticleClick(post)}>
+                  <S.PostItem key={post.id || index} onClick={() => handleArticleClick(post)}>
                     <S.PostItemLeft>{post.category}</S.PostItemLeft>
                     <S.PostItemCenter>{post.title}</S.PostItemCenter>
                     <S.PostItemRight>{post.publishedAt.split(" ")[0].replace(/-/g, ".")}</S.PostItemRight>
@@ -145,7 +147,7 @@ const Main: React.FC = () => {
         </S.CardNewsHeader>
         <S.CardNewsList>
           {posts.slice(0, 5).map((post, index) => (
-            <S.Card key={index}>
+            <S.Card key={post.id || index}>
               <h3>{post.title}</h3>
               <ul>
                 <li>What: {post.what}</li>
