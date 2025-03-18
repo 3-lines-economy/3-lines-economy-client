@@ -184,11 +184,17 @@ export const PostItemLeft = styled.div`
   padding-right: 2rem;
   font-weight: 500;
   font-size: 16px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
 
   @media (max-width: 768px) {
     width: auto;
     padding: 0.5rem 0;
     font-size: 14px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
   }
 `;
 

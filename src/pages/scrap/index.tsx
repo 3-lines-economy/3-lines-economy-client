@@ -135,7 +135,15 @@ const Scrap: React.FC = () => {
             posts.map((post, index) => (
               <S.PostItem key={post.id || index} onClick={() => handleArticleClick(post)}>
                 <S.PostItemLeft>
-                  <img src="/bookmark.svg" alt="bookmark" style={{ marginRight: "8px", verticalAlign: "middle" }} />
+                  <img
+                    src="/bookmark.svg"
+                    alt="bookmark"
+                    style={{
+                      marginRight: "8px",
+                      verticalAlign: "middle",
+                      flexShrink: 0,
+                    }}
+                  />
                   <span style={{ verticalAlign: "middle" }}>{CategoryMap[post.category as CategoryType] || post.category}</span>
                 </S.PostItemLeft>
                 <S.PostItemCenter>{post.title}</S.PostItemCenter>
