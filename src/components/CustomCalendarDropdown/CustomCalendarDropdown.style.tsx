@@ -4,6 +4,11 @@ import "./calendar.css";
 export const Container = styled.div`
   position: relative;
   display: inline-block;
+
+  @media (max-width: 768px) {
+    display: block;
+    width: 100%;
+  }
 `;
 
 export const ToggleButton = styled.button<{ isOpen: boolean }>`
@@ -21,6 +26,11 @@ export const ToggleButton = styled.button<{ isOpen: boolean }>`
   &:hover {
     background-color: #f5f5f5;
   }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: space-between;
+  }
 `;
 
 export const CalendarDropdown = styled.div`
@@ -33,4 +43,15 @@ export const CalendarDropdown = styled.div`
   border-radius: 8px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   z-index: 10;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 16px 16px 0 0;
+    padding-bottom: 20px;
+  }
 `;

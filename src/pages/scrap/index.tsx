@@ -22,15 +22,35 @@ const Scrap: React.FC = () => {
   const [totalElements, setTotalElements] = useState(0);
   const [totalPages, setTotalPages] = useState(10);
   const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const router = useRouter();
   const setSelectedArticle = useSetRecoilState(selectedArticleState);
 
   useEffect(() => {
     setMounted(true);
+    // 모바일 환경 감지
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkIfMobile();
+    window.addEventListener("resize", checkIfMobile);
+    return () => window.removeEventListener("resize", checkIfMobile);
   }, []);
 
-  const startPage = 1;
-  const endPage = 5;
+  // 페이지네이션 로직 수정
+  const calculcatePagination = () => {
+    if (isMobile) {
+      // 모바일에서는 현재 페이지 기준 앞뒤로 1페이지씩만 표시
+      const startFromPage = Math.max(1, currentPage - 1);
+      const endAtPage = Math.min(totalPages, currentPage + 1);
+      return { startPage: startFromPage, endPage: endAtPage };
+    } else {
+      return { startPage: 1, endPage: 5 };
+    }
+  };
+
+  const { startPage, endPage } = calculcatePagination();
 
   const fetchData = async () => {
     if (!selectedDate || !mounted) return;
@@ -38,6 +58,7 @@ const Scrap: React.FC = () => {
     setIsLoading(true);
     const formattedDate = selectedDate.toISOString().split("T")[0].replace(/-/g, "");
     const baseUrl = `${process.env.NEXT_PUBLIC_API}news`;
+
     const url = `${baseUrl}?date=${formattedDate}&page=${currentPage}&category=${selectedCategory !== "전체" ? selectedCategory : ""}`;
 
     try {
@@ -110,38 +131,48 @@ const Scrap: React.FC = () => {
         <S.LoadingMessage>Loading...</S.LoadingMessage>
       ) : (
         <S.PostList>
-          {posts.map((post, index) => (
-            <S.PostItem key={post.id || index} onClick={() => handleArticleClick(post)}>
-              <S.PostItemLeft>
-                <img src="/bookmark.svg" alt="bookmark" style={{ marginRight: "8px", verticalAlign: "middle" }} />
-                <span style={{ verticalAlign: "middle" }}>{CategoryMap[post.category as CategoryType] || post.category}</span>
-              </S.PostItemLeft>
-              <S.PostItemCenter>{post.title}</S.PostItemCenter>
-              <S.PostItemRight>{post.publishedAt.split(" ")[0].replace(/-/g, ".")}</S.PostItemRight>
-            </S.PostItem>
-          ))}
+          {posts.length > 0 ? (
+            posts.map((post, index) => (
+              <S.PostItem key={post.id || index} onClick={() => handleArticleClick(post)}>
+                <S.PostItemLeft>
+                  <img src="/bookmark.svg" alt="bookmark" style={{ marginRight: "8px", verticalAlign: "middle" }} />
+                  <span style={{ verticalAlign: "middle" }}>{CategoryMap[post.category as CategoryType] || post.category}</span>
+                </S.PostItemLeft>
+                <S.PostItemCenter>{post.title}</S.PostItemCenter>
+                <S.PostItemRight>{post.publishedAt.split(" ")[0].replace(/-/g, ".")}</S.PostItemRight>
+              </S.PostItem>
+            ))
+          ) : (
+            <S.LoadingMessage>스크랩한 기사가 없습니다.</S.LoadingMessage>
+          )}
         </S.PostList>
       )}
 
-      <S.Pagination>
-        <S.PageButton onClick={() => paginate(1)} disabled={currentPage === 1} isCurrentPage={false}>
-          {"<<"}
-        </S.PageButton>
-        <S.PageButton onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} isCurrentPage={false}>
-          {"<"}
-        </S.PageButton>
-        {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((pageNumber) => (
-          <S.PageButton key={pageNumber} onClick={() => paginate(pageNumber)} isCurrentPage={currentPage === pageNumber}>
-            {pageNumber}
+      {totalPages > 1 && (
+        <S.Pagination>
+          {!isMobile && (
+            <S.PageButton onClick={() => paginate(1)} disabled={currentPage === 1} isCurrentPage={false}>
+              {"<<"}
+            </S.PageButton>
+          )}
+          <S.PageButton onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} isCurrentPage={false}>
+            {"<"}
           </S.PageButton>
-        ))}
-        <S.PageButton onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} isCurrentPage={false}>
-          {">"}
-        </S.PageButton>
-        <S.PageButton onClick={() => paginate(totalPages)} disabled={currentPage === totalPages} isCurrentPage={false}>
-          {">>"}
-        </S.PageButton>
-      </S.Pagination>
+          {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((pageNumber) => (
+            <S.PageButton key={pageNumber} onClick={() => paginate(pageNumber)} isCurrentPage={currentPage === pageNumber}>
+              {pageNumber}
+            </S.PageButton>
+          ))}
+          <S.PageButton onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} isCurrentPage={false}>
+            {">"}
+          </S.PageButton>
+          {!isMobile && (
+            <S.PageButton onClick={() => paginate(totalPages)} disabled={currentPage === totalPages} isCurrentPage={false}>
+              {">>"}
+            </S.PageButton>
+          )}
+        </S.Pagination>
+      )}
     </S.Container>
   );
 };
