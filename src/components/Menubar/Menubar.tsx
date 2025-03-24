@@ -10,35 +10,35 @@ import ITIcon from "@public/category/it.png";
 import WorldIcon from "@public/category/world.png";
 import AllIcon from "@public/category/all.png";
 import Image from "next/image";
+import { CategoryType, MenubarCategoryMap, reverseCategoryMap } from "../../types/category";
 
 const categories = [
-  { name: "전체", icon: AllIcon },
-  { name: "경제", icon: EconomyIcon },
-  { name: "정치", icon: PolicyIcon },
-  { name: "사회", icon: SocietyIcon },
-  { name: "생활/문화", icon: LifeIcon },
-  { name: "IT/과학", icon: ITIcon },
-  { name: "세계", icon: WorldIcon },
+  { name: CategoryType.ALL, displayName: MenubarCategoryMap[CategoryType.ALL], icon: AllIcon },
+  { name: CategoryType.ECONOMY, displayName: MenubarCategoryMap[CategoryType.ECONOMY], icon: EconomyIcon },
+  { name: CategoryType.POLITICS, displayName: MenubarCategoryMap[CategoryType.POLITICS], icon: PolicyIcon },
+  { name: CategoryType.SOCIETY, displayName: MenubarCategoryMap[CategoryType.SOCIETY], icon: SocietyIcon },
+  { name: CategoryType.LIFESTYLE_CULTURE, displayName: MenubarCategoryMap[CategoryType.LIFESTYLE_CULTURE], icon: LifeIcon },
+  { name: CategoryType.IT_SCIENCE, displayName: MenubarCategoryMap[CategoryType.IT_SCIENCE], icon: ITIcon },
+  { name: CategoryType.WORLD, displayName: MenubarCategoryMap[CategoryType.WORLD], icon: WorldIcon },
 ];
 
 const Menubar: React.FC = () => {
-  const [activeCategory, setActiveCategory] =
-    useRecoilState(activeCategoryState);
+  const [activeCategory, setActiveCategory] = useRecoilState(activeCategoryState);
+
+  const handleCategoryClick = (category: CategoryType) => {
+    setActiveCategory(MenubarCategoryMap[category]);
+  };
 
   return (
     <S.Container>
       {categories.map((category) => (
         <S.CategoryButton
           key={category.name}
-          active={category.name === activeCategory}
-          onClick={() => setActiveCategory(category.name)}>
-          <Image
-            src={category.icon}
-            alt={`${category.name} icon`}
-            width={16}
-            height={16}
-          />
-          <span>{category.name}</span>
+          active={MenubarCategoryMap[category.name] === activeCategory}
+          onClick={() => handleCategoryClick(category.name)}
+        >
+          <Image src={category.icon} alt={`${category.displayName} icon`} width={16} height={16} />
+          <span>{category.displayName}</span>
         </S.CategoryButton>
       ))}
     </S.Container>

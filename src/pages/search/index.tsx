@@ -6,6 +6,7 @@ import SideBar from "@/components/Sidebar/Sidebar";
 import * as S from "./index.style";
 import { selectedArticleState } from "@/atoms/selectedArticleAtom";
 import { Post } from "@/types/post";
+import { CategoryMap, CategoryType } from "../../types/category";
 
 // interface SearchResult {
 //   id: number;
@@ -50,9 +51,7 @@ const Search: React.FC = () => {
 
     try {
       const baseUrl = `${process.env.NEXT_PUBLIC_API_NEW}search`;
-      const url = `${baseUrl}?keyword=${encodeURIComponent(
-        keyword as string
-      )}&page=1`;
+      const url = `${baseUrl}?keyword=${encodeURIComponent(keyword as string)}&page=1`;
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error("Failed to fetch search results.");
@@ -95,51 +94,29 @@ const Search: React.FC = () => {
           <S.MainBody>
             <S.PostList>
               {currentPosts.map((result) => (
-                <S.PostItem
-                  key={result.id}
-                  onClick={() => handleArticleClick(result)}>
-                  <S.PostItemLeft>{result.category}</S.PostItemLeft>
+                <S.PostItem key={result.id} onClick={() => handleArticleClick(result)}>
+                  <S.PostItemLeft>{CategoryMap[result.category as CategoryType] || result.category}</S.PostItemLeft>
                   <S.PostItemCenter>{result.title}</S.PostItemCenter>
-                  <S.PostItemRight>
-                    {result.publishedAt.replace(/-/g, ".")}
-                  </S.PostItemRight>
+                  <S.PostItemRight>{result.publishedAt.replace(/-/g, ".")}</S.PostItemRight>
                 </S.PostItem>
               ))}
             </S.PostList>
             <S.Pagination>
-              <S.PageButton
-                onClick={() => paginate(1)}
-                disabled={currentPage === 1}
-                isCurrentPage={false}>
+              <S.PageButton onClick={() => paginate(1)} disabled={currentPage === 1} isCurrentPage={false}>
                 {"<<"}
               </S.PageButton>
-              <S.PageButton
-                onClick={() => paginate(currentPage - 1)}
-                disabled={currentPage === 1}
-                isCurrentPage={false}>
+              <S.PageButton onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} isCurrentPage={false}>
                 {"<"}
               </S.PageButton>
-              {Array.from(
-                { length: endPage - startPage + 1 },
-                (_, i) => startPage + i
-              ).map((pageNumber) => (
-                <S.PageButton
-                  key={pageNumber}
-                  onClick={() => paginate(pageNumber)}
-                  isCurrentPage={currentPage === pageNumber}>
+              {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((pageNumber) => (
+                <S.PageButton key={pageNumber} onClick={() => paginate(pageNumber)} isCurrentPage={currentPage === pageNumber}>
                   {pageNumber}
                 </S.PageButton>
               ))}
-              <S.PageButton
-                onClick={() => paginate(currentPage + 1)}
-                disabled={currentPage === totalPages}
-                isCurrentPage={false}>
+              <S.PageButton onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} isCurrentPage={false}>
                 {">"}
               </S.PageButton>
-              <S.PageButton
-                onClick={() => paginate(totalPages)}
-                disabled={currentPage === totalPages}
-                isCurrentPage={false}>
+              <S.PageButton onClick={() => paginate(totalPages)} disabled={currentPage === totalPages} isCurrentPage={false}>
                 {">>"}
               </S.PageButton>
             </S.Pagination>

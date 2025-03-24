@@ -1,6 +1,7 @@
 import { atom } from "recoil";
+import { CategoryMap, CategoryType } from "../types/category";
 
 export const activeCategoryState = atom({
   key: "activeCategoryState",
-  default: "전체",
+  default: CategoryMap[CategoryType.ALL],
 });

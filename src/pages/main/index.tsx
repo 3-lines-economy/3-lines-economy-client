@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useRecoilState, useSetRecoilState } from "recoil";
@@ -9,25 +11,25 @@ import SideBar from "@/components/Sidebar/Sidebar";
 import { selectedArticleState } from "@/atoms/selectedArticleAtom";
 import CustomCalendar from "@/components/CustomCalendar/CustomCalendar";
 import { Post } from "@/types/post";
-
-const PostsPerPage = 10;
-const PageGroupSize = 5;
+import { CategoryType, ScrapCategoryMap } from "../../types/category";
 
 const Main: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedDate] = useRecoilState(calendarValueState);
+  const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(null);
   const setSelectedArticle = useSetRecoilState(selectedArticleState);
+  const [mounted, setMounted] = useState(false);
 
-  const totalPages = Math.ceil(posts.length / PostsPerPage);
+  // 클라이언트 사이드 렌더링 체크
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  const indexOfLastPost = currentPage * PostsPerPage;
-  const indexOfFirstPost = indexOfLastPost - PostsPerPage;
-  const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost);
-
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-
+  const PageGroupSize = 5;
   const currentGroup = Math.ceil(currentPage / PageGroupSize);
   const startPage = (currentGroup - 1) * PageGroupSize + 1;
   const endPage = Math.min(currentGroup * PageGroupSize, totalPages);
@@ -39,34 +41,51 @@ const Main: React.FC = () => {
     router.push(`/article/${post.link.split("/").pop()}`);
   };
 
+  const paginate = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleCategorySelect = (category: CategoryType) => {
+    setSelectedCategory(category);
+    setCurrentPage(1); // 카테고리 선택 시 페이지 1로 리셋
+  };
+
   const fetchData = async () => {
     if (!selectedDate) return;
 
     setIsLoading(true);
-    const formattedDate = selectedDate
-      .toISOString()
-      .split("T")[0]
-      .replace(/-/g, "");
-    const baseUrl = `${process.env.NEXT_PUBLIC_API}news`;
-    const url = `${baseUrl}?path=news&date=${formattedDate}`;
+    const formattedDate = selectedDate.toISOString().split("T")[0].replace(/-/g, "");
+    const baseUrl = `${process.env.NEXT_PUBLIC_API}`;
+
+    let url;
+    if (selectedCategory) {
+      // 카테고리가 선택된 경우 카테고리 기준 API 호출
+      url = `${baseUrl}news/by-category?category=${selectedCategory}&page=${currentPage}`;
+    } else {
+      // 기존 날짜 기준 API 호출
+      url = `${baseUrl}news?path=news&date=${formattedDate}&page=${currentPage}`;
+    }
 
     try {
       const response = await fetch(url, { method: "GET" });
       if (!response.ok) throw new Error(`Error: ${response.status}`);
       const data = await response.json();
-      if (data.statusCode === 500) return;
+      if (data.status !== 200) return;
 
-      const articles = data.body.map((article: any) => ({
+      const articles = data.body.newsList.map((article: any) => ({
+        id: article.id,
         link: article.link,
         category: article.category,
         title: article.title,
-        datetime: article.datetime,
-        content: article.content,
+        publishedAt: article.publishedAt,
         what: article.what,
         why: article.why,
         how: article.how,
       }));
+
       setPosts(articles);
+      setTotalPages(data.body.totalPages);
+      setTotalElements(data.body.totalElements);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -75,15 +94,22 @@ const Main: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchData();
-  }, [selectedDate]);
+    if (mounted && (selectedDate || selectedCategory)) {
+      fetchData();
+    }
+  }, [selectedDate, selectedCategory, mounted, currentPage]);
+
+  // 하이드레이션 전에는 아무것도 렌더링하지 않음
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <>
       <S.MainContainer>
         <S.SideBarContainer>
           <CustomCalendar />
-          <SideBar />
+          <SideBar onCategorySelect={handleCategorySelect} selectedCategory={selectedCategory} />
         </S.SideBarContainer>
         <S.Content>
           <MainBanner />
@@ -92,52 +118,30 @@ const Main: React.FC = () => {
           ) : (
             <S.MainBody>
               <S.PostList>
-                {currentPosts.map((post, index) => (
-                  <S.PostItem
-                    key={index}
-                    onClick={() => handleArticleClick(post)}>
-                    <S.PostItemLeft>{post.category}</S.PostItemLeft>
+                {posts.map((post, index) => (
+                  <S.PostItem key={post.id || index} onClick={() => handleArticleClick(post)}>
+                    <S.PostItemLeft>{ScrapCategoryMap[post.category as CategoryType] || post.category}</S.PostItemLeft>
                     <S.PostItemCenter>{post.title}</S.PostItemCenter>
-                    <S.PostItemRight>
-                      {post.datetime.split(" ")[0].replace(/-/g, ".")}
-                    </S.PostItemRight>
+                    <S.PostItemRight>{post.publishedAt.split(" ")[0].replace(/-/g, ".")}</S.PostItemRight>
                   </S.PostItem>
                 ))}
               </S.PostList>
               <S.Pagination>
-                <S.PageButton
-                  onClick={() => paginate(1)}
-                  disabled={currentPage === 1}
-                  isCurrentPage={false}>
+                <S.PageButton onClick={() => paginate(1)} disabled={currentPage === 1} isCurrentPage={false}>
                   {"<<"}
                 </S.PageButton>
-                <S.PageButton
-                  onClick={() => paginate(currentPage - 1)}
-                  disabled={currentPage === 1}
-                  isCurrentPage={false}>
+                <S.PageButton onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} isCurrentPage={false}>
                   {"<"}
                 </S.PageButton>
-                {Array.from(
-                  { length: endPage - startPage + 1 },
-                  (_, i) => startPage + i
-                ).map((pageNumber) => (
-                  <S.PageButton
-                    key={pageNumber}
-                    onClick={() => paginate(pageNumber)}
-                    isCurrentPage={currentPage === pageNumber}>
+                {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((pageNumber) => (
+                  <S.PageButton key={pageNumber} onClick={() => paginate(pageNumber)} isCurrentPage={currentPage === pageNumber}>
                     {pageNumber}
                   </S.PageButton>
                 ))}
-                <S.PageButton
-                  onClick={() => paginate(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                  isCurrentPage={false}>
+                <S.PageButton onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} isCurrentPage={false}>
                   {">"}
                 </S.PageButton>
-                <S.PageButton
-                  onClick={() => paginate(totalPages)}
-                  disabled={currentPage === totalPages}
-                  isCurrentPage={false}>
+                <S.PageButton onClick={() => paginate(totalPages)} disabled={currentPage === totalPages} isCurrentPage={false}>
                   {">>"}
                 </S.PageButton>
               </S.Pagination>
@@ -149,15 +153,13 @@ const Main: React.FC = () => {
         <S.CardNewsHeader>
           <CardNewsText />
           <div style={{ height: "20px" }}></div>
-          <S.CardNewsHeaderA
-            href="https://www.instagram.com/3_lines_economy/"
-            target="_blank">
+          <S.CardNewsHeaderA href="https://www.instagram.com/3_lines_economy/" target="_blank">
             더보기 &gt;
           </S.CardNewsHeaderA>
         </S.CardNewsHeader>
         <S.CardNewsList>
           {posts.slice(0, 5).map((post, index) => (
-            <S.Card key={index}>
+            <S.Card key={post.id || index}>
               <h3>{post.title}</h3>
               <ul>
                 <li>What: {post.what}</li>

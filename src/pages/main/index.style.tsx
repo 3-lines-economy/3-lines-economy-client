@@ -109,8 +109,7 @@ export const PageButton = styled.button<{ isCurrentPage: boolean }>`
   width: 40px;
   text-align: center;
   color: ${(props) => (props.isCurrentPage ? "white" : "#888888")};
-  background-color: ${(props) =>
-    props.isCurrentPage ? "black" : "transparent"};
+  background-color: ${(props) => (props.isCurrentPage ? "black" : "transparent")};
   border-radius: 5px;
 
   &:hover {

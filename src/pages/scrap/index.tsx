@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from "react";
 import * as S from "./index.style";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { calendarValueState } from "../../atoms/calendarAtom";
+import { selectedArticleState } from "../../atoms/selectedArticleAtom";
 import CustomCalendar from "@/components/CustomCalendar/CustomCalendar";
 import { Post } from "@/types/post";
 import CustomCalendarDropdown from "@/components/CustomCalendarDropdown/CustomCalendarDropdown";
 import Menubar from "@/components/Menubar/Menubar";
+import { CategoryType, ScrapCategoryMap } from "../../types/category";
+import { useRouter } from "next/router";
 
 const PostsPerPage = 10;
 
@@ -15,18 +18,76 @@ const Scrap: React.FC = () => {
   const [selectedDate] = useRecoilState(calendarValueState);
   const [selectedCategory, setSelectedCategory] = useState("전체");
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [totalElements, setTotalElements] = useState(0);
+  const [totalPages, setTotalPages] = useState(10);
+  const [mounted, setMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const router = useRouter();
+  const setSelectedArticle = useSetRecoilState(selectedArticleState);
 
-  const startPage = 1;
-  const endPage = 5;
-  const totalPages = 10;
+  useEffect(() => {
+    setMounted(true);
+    // 모바일 환경 감지
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+
+    checkIfMobile();
+    window.addEventListener("resize", checkIfMobile);
+    return () => window.removeEventListener("resize", checkIfMobile);
+  }, []);
+
+  // 페이지네이션 로직 수정
+  const calculcatePagination = () => {
+    const startFromPage = Math.max(1, currentPage - 2);
+    const endAtPage = Math.min(totalPages, currentPage + 2);
+    return { startPage: startFromPage, endPage: endAtPage };
+  };
+
+  const { startPage, endPage } = calculcatePagination();
 
   const fetchData = async () => {
-    // TODO 스크랩 불러오기 api
+    if (!selectedDate || !mounted) return;
+
+    setIsLoading(true);
+    const formattedDate = selectedDate.toISOString().split("T")[0].replace(/-/g, "");
+    const baseUrl = `${process.env.NEXT_PUBLIC_API}news`;
+
+    const url = `${baseUrl}?date=${formattedDate}&page=${currentPage}&category=${selectedCategory !== "전체" ? selectedCategory : ""}`;
+
+    try {
+      const response = await fetch(url, { method: "GET" });
+      if (!response.ok) throw new Error(`Error: ${response.status}`);
+      const data = await response.json();
+      if (data.status !== 200) return;
+
+      const articles = data.body.newsList.map((article: any) => ({
+        id: article.id,
+        link: article.link,
+        category: article.category,
+        title: article.title,
+        publishedAt: article.publishedAt,
+        what: article.what,
+        why: article.why,
+        how: article.how,
+      }));
+
+      setPosts(articles);
+      setTotalPages(data.body.totalPages);
+      setTotalElements(data.body.totalElements);
+    } catch (error) {
+      console.error("스크랩 데이터 불러오기 실패:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
-    fetchData();
-  }, [selectedDate, currentPage, selectedCategory]);
+    if (mounted && selectedDate) {
+      fetchData();
+    }
+  }, [selectedDate, currentPage, selectedCategory, mounted]);
 
   const handleCategoryClick = (category: string) => {
     setSelectedCategory(category);
@@ -34,6 +95,15 @@ const Scrap: React.FC = () => {
   };
 
   const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+
+  const handleArticleClick = (post: Post) => {
+    setSelectedArticle(post);
+    router.push(`/detail/${post.id}`);
+  };
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <S.Container>
@@ -52,53 +122,60 @@ const Scrap: React.FC = () => {
         </S.DateDropdown>
       )}
 
-      <S.PostList>
-        {posts.map((post, index) => (
-          <S.PostItem key={index}>
-            <S.PostItemLeft>{post.category}</S.PostItemLeft>
-            <S.PostItemCenter>{post.title}</S.PostItemCenter>
-            <S.PostItemRight>{post.datetime}</S.PostItemRight>
-          </S.PostItem>
-        ))}
-      </S.PostList>
+      {isLoading ? (
+        <S.LoadingMessage>Loading...</S.LoadingMessage>
+      ) : (
+        <S.PostList>
+          {posts.length > 0 ? (
+            posts.map((post, index) => (
+              <S.PostItem key={post.id || index} onClick={() => handleArticleClick(post)}>
+                <S.PostItemLeft>
+                  <img
+                    src="/bookmark.svg"
+                    alt="bookmark"
+                    style={{
+                      marginRight: "8px",
+                      verticalAlign: "middle",
+                      flexShrink: 0,
+                    }}
+                  />
+                  <span style={{ verticalAlign: "middle" }}>{ScrapCategoryMap[post.category as CategoryType] || post.category}</span>
+                </S.PostItemLeft>
+                <S.PostItemCenter>{post.title}</S.PostItemCenter>
+                <S.PostItemRight>{post.publishedAt.split(" ")[0].replace(/-/g, ".")}</S.PostItemRight>
+              </S.PostItem>
+            ))
+          ) : (
+            <S.LoadingMessage>스크랩한 기사가 없습니다.</S.LoadingMessage>
+          )}
+        </S.PostList>
+      )}
 
-      <S.Pagination>
-        <S.PageButton
-          onClick={() => paginate(1)}
-          disabled={currentPage === 1}
-          isCurrentPage={false}>
-          {"<<"}
-        </S.PageButton>
-        <S.PageButton
-          onClick={() => paginate(currentPage - 1)}
-          disabled={currentPage === 1}
-          isCurrentPage={false}>
-          {"<"}
-        </S.PageButton>
-        {Array.from(
-          { length: endPage - startPage + 1 },
-          (_, i) => startPage + i
-        ).map((pageNumber) => (
-          <S.PageButton
-            key={pageNumber}
-            onClick={() => paginate(pageNumber)}
-            isCurrentPage={currentPage === pageNumber}>
-            {pageNumber}
+      {totalPages > 1 && (
+        <S.Pagination>
+          {!isMobile && (
+            <S.PageButton onClick={() => paginate(1)} disabled={currentPage === 1} isCurrentPage={false}>
+              {"<<"}
+            </S.PageButton>
+          )}
+          <S.PageButton onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} isCurrentPage={false}>
+            {"<"}
           </S.PageButton>
-        ))}
-        <S.PageButton
-          onClick={() => paginate(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          isCurrentPage={false}>
-          {">"}
-        </S.PageButton>
-        <S.PageButton
-          onClick={() => paginate(totalPages)}
-          disabled={currentPage === totalPages}
-          isCurrentPage={false}>
-          {">>"}
-        </S.PageButton>
-      </S.Pagination>
+          {Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i).map((pageNumber) => (
+            <S.PageButton key={pageNumber} onClick={() => paginate(pageNumber)} isCurrentPage={currentPage === pageNumber}>
+              {pageNumber}
+            </S.PageButton>
+          ))}
+          <S.PageButton onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} isCurrentPage={false}>
+            {">"}
+          </S.PageButton>
+          {!isMobile && (
+            <S.PageButton onClick={() => paginate(totalPages)} disabled={currentPage === totalPages} isCurrentPage={false}>
+              {">>"}
+            </S.PageButton>
+          )}
+        </S.Pagination>
+      )}
     </S.Container>
   );
 };
